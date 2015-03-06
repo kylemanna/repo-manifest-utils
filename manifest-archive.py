@@ -66,7 +66,7 @@ if args.jobs:
 logging.info("Running: {}".format(str(cmd_sync)))
 ret = subprocess.call(cmd_sync)
 
-logging.info("Creating tarball @ ".format(output))
+logging.info("Creating tarball @ {}".format(output))
 os.chdir(temp.name)
 ext = os.path.splitext(output)[1][1:]
 with tarfile.open(output, 'w:{}'.format(ext)) as tar:
