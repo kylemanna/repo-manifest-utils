@@ -31,7 +31,17 @@ origdir = os.getcwd()
 
 # Set TMPDIR to change the base
 temp = tempfile.TemporaryDirectory()
-logging.debug(temp)
+
+# Check that temp directory isn't on a small tmpfs
+temp_free_gb = shutil.disk_usage(temp.name)[2] / (2**30)
+logging.debug('Free diskspace @ {}: {:.4} GB'.format(temp.name, temp_free_gb))
+
+if temp_free_gb < 10:
+    print('Insufficent free diskspace @ {}: {:.4} GB'.format(
+        temp.name, temp_free_gb), file=sys.stderr)
+    print('Set the env TMPDIR variable to move temp directory')
+    sys.exit(1)
+
 base = os.path.join(temp.name, name)
 os.mkdir(base)
 os.chdir(base)
