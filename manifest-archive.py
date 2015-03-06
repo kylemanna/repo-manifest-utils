@@ -7,14 +7,10 @@
 
 import os
 import sys
-import glob
-import json
 import logging
 import tarfile
 import tempfile
 import subprocess
-import xml.etree.ElementTree as ET
-import http.client
 import argparse
 from time import gmtime, strftime
 
