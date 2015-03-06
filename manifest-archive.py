@@ -7,6 +7,7 @@
 
 import os
 import sys
+import shutil
 import logging
 import tarfile
 import tempfile
@@ -65,5 +66,14 @@ ret = subprocess.call(cmd_sync)
 logging.info("Creating tarball @ {}".format(output))
 os.chdir(temp.name)
 ext = os.path.splitext(output)[1][1:]
-with tarfile.open(output, 'w:{}'.format(ext)) as tar:
-    tar.add(name)
+
+if shutil.which('pxz') and ext == 'xz':
+    logging.debug("Using pxz for compression")
+    # Hand it over to cmd line tools since multiple pipes in python is painful
+    # and leverage pxz for best performance
+    cmd_tar = 'tar cf - {} | pxz > {}'.format(name, output)
+    subprocess.call(cmd_tar, shell=True)
+else:
+    # Failsafe tarball + compression (slow!)
+    with tarfile.open(output, 'w:{}'.format(ext)) as tar:
+        tar.add(name)
